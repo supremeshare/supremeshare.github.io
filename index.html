@@ -3,59 +3,289 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Supreme Share</title>
+<title>Supreme Share – send files between your phone and PC</title>
 <meta name="description" content="Send files directly between Android phones and Windows PCs. No cloud, no cables, no account.">
+<meta property="og:title" content="Supreme Share">
+<meta property="og:description" content="Send files between your phone and PC. No cloud.">
+<meta property="og:image" content="https://supremeshare.github.io/og.png">
+<meta property="og:url" content="https://supremeshare.github.io/">
+<link rel="canonical" href="https://supremeshare.github.io/">
 <link rel="icon" href="logo.png">
 <style>
-  :root { --bg: #ffffff; --text: #1f2328; --muted: #59636e; --accent: #0969e8; --card: #f3f7fd; }
-  @media (prefers-color-scheme: dark) { :root { --bg: #0d1117; --text: #e6edf3; --muted: #9aa4af; --accent: #6cb2ff; --card: #161f2c; } }
-  body { margin: 0; background: var(--bg); color: var(--text); font: 16px/1.6 -apple-system, "Segoe UI", Roboto, Arial, sans-serif; }
-  main { max-width: 720px; margin: 0 auto; padding: 48px 16px 64px; }
-  .brand { display: flex; align-items: center; gap: 16px; }
-  .brand img { width: 72px; height: 72px; border-radius: 18px; }
-  h1 { font-size: 32px; margin: 0; }
-  .tagline { color: var(--muted); margin: 2px 0 0; }
-  h2 { font-size: 20px; margin: 32px 0 8px; }
-  .card { background: var(--card); border-radius: 16px; padding: 20px; margin-top: 28px; }
-  .button { display: inline-block; background: var(--accent); color: #fff; text-decoration: none; font-weight: 600; padding: 12px 20px; border-radius: 12px; }
-  .small { color: var(--muted); font-size: 14px; }
-  a { color: var(--accent); }
-  ul { padding-left: 20px; }
-  footer { margin-top: 40px; color: var(--muted); font-size: 14px; }
+  :root {
+    --paper: #f4f7fb;
+    --surface: #ffffff;
+    --ink: #0b1d3a;
+    --soft: #4a5a72;
+    --blue: #0969e8;
+    --tile: #7fbbff;
+    --deep: #0752c4;
+    --line: #dbe3ee;
+    --focus: #ffb000;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root { --paper: #0a1424; --surface: #101d33; --ink: #eaf1fb; --soft: #9fb0c8; --line: #22324d; }
+  }
+  * { box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+  body {
+    margin: 0; background: var(--paper); color: var(--ink);
+    font: 17px/1.6 "Segoe UI Variable Text", "Segoe UI", system-ui, -apple-system, Roboto, sans-serif;
+  }
+  a { color: var(--blue); }
+  @media (prefers-color-scheme: dark) { a { color: var(--tile); } }
+  :focus-visible { outline: 3px solid var(--focus); outline-offset: 3px; border-radius: 6px; }
+  .wrap { max-width: 1120px; margin: 0 auto; padding: 0 24px; }
+
+  header { padding: 20px 0; }
+  header .wrap { display: flex; align-items: center; justify-content: space-between; }
+  .brand { display: flex; align-items: center; gap: 10px; font-weight: 700; font-size: 18px; color: var(--ink); text-decoration: none; }
+  .brand img { width: 34px; height: 34px; border-radius: 9px; }
+  .header-link { font-weight: 600; text-decoration: none; }
+
+  /* Hero */
+  .hero { display: grid; grid-template-columns: 1.05fr 1fr; gap: 48px; align-items: center; padding: 48px 0 72px; }
+  h1 {
+    font-family: "Segoe UI Variable Display", "Segoe UI", system-ui, -apple-system, Roboto, sans-serif;
+    font-size: clamp(40px, 6vw, 68px); line-height: 1.02; letter-spacing: -0.035em; font-weight: 800;
+    margin: 0 0 18px; max-width: 12ch;
+  }
+  .lede { font-size: 20px; color: var(--soft); margin: 0 0 30px; max-width: 34ch; }
+  .actions { display: flex; flex-wrap: wrap; align-items: center; gap: 14px 22px; }
+  .button {
+    display: inline-flex; align-items: center; gap: 10px; background: var(--blue); color: #fff;
+    font-weight: 650; font-size: 17px; text-decoration: none; padding: 15px 24px; border-radius: 14px;
+    box-shadow: 0 10px 24px -12px rgba(9, 105, 232, .8);
+  }
+  .button:hover { background: var(--deep); }
+  .button svg { width: 20px; height: 20px; }
+  .note { color: var(--soft); font-size: 15px; }
+
+  /* Hero scene: a real file leaves the phone and lands on the laptop (6 s loop) */
+  .scene { position: relative; width: 100%; max-width: 560px; aspect-ratio: 1.36; justify-self: center; }
+  .s-phone { position: absolute; left: 1%; top: 6%; width: 27%; aspect-ratio: 540 / 1098; border-radius: 9% / 4.4%;
+             background: #0c1628; padding: 1.2%; box-shadow: 0 30px 50px -28px rgba(11, 29, 58, .55); z-index: 2; }
+  .s-phone img { display: block; width: 100%; height: 100%; object-fit: cover; object-position: top; border-radius: 8% / 3.9%; }
+  .s-laptop { position: absolute; right: 0; top: 24%; width: 70%; }
+  .s-lid { position: relative; background: #0c1628; border-radius: 3.5% / 5%; padding: 2.4% 2.4% 2.8%; box-shadow: 0 34px 60px -34px rgba(11, 29, 58, .6); }
+  .s-lid::before { content: ""; position: absolute; left: 50%; top: 1%; width: .9%; aspect-ratio: 1; margin-left: -.45%; border-radius: 50%; background: #2c3e5c; }
+  .s-screen { position: relative; aspect-ratio: 1100 / 773; border-radius: 1.6%; overflow: hidden; background: #eef3fb; }
+  .s-screen img { display: block; width: 100%; height: 100%; object-fit: cover; }
+  .s-base { height: 10px; margin: 0 -7%; border-radius: 0 0 14px 14px; background: linear-gradient(#e2e9f3, #b8c6da); position: relative; }
+  .s-base::before { content: ""; position: absolute; left: 50%; top: 0; width: 16%; height: 4px; margin-left: -8%; border-radius: 0 0 6px 6px; background: #a6b6cc; }
+  .s-file { position: absolute; left: 9%; top: 40%; width: 11%; aspect-ratio: .86; border-radius: 16%; background: var(--blue); z-index: 3;
+            box-shadow: 0 14px 24px -10px rgba(9, 105, 232, .85); opacity: 0; }
+  .s-file::before { content: ""; position: absolute; left: 17%; right: 26%; top: 22%; height: 6%; border-radius: 3px; background: rgba(255,255,255,.9);
+                    box-shadow: 0 0 0 0 transparent; }
+  .s-file::after { content: ""; position: absolute; left: 17%; right: 17%; top: 40%; height: 6%; border-radius: 3px; background: rgba(255,255,255,.6);
+                   box-shadow: 0 260% 0 rgba(255,255,255,.45); }
+  .s-panel { position: absolute; left: 17%; right: 17%; top: 34%; padding: 3.5% 5%; white-space: nowrap; border-radius: 12px; background: rgba(255,255,255,.96);
+             box-shadow: 0 16px 30px -16px rgba(11, 29, 58, .5); font-size: clamp(9px, 1.15vw, 13px); color: #0b1d3a; opacity: 0; }
+  .s-panel b { display: block; margin-bottom: 7%; }
+  .s-bar { height: 6px; border-radius: 3px; background: #dbe3ee; overflow: hidden; }
+  .s-bar i { display: block; height: 100%; width: 0; background: var(--blue); border-radius: 3px; }
+  .s-saved { position: absolute; left: 50%; top: 46%; display: flex; align-items: center; gap: 8px; white-space: nowrap;
+             padding: 6px 14px 6px 6px; border-radius: 999px; background: #fff; box-shadow: 0 12px 24px -12px rgba(11, 29, 58, .55);
+             font-size: clamp(10px, 1.6vw, 14px); font-weight: 700; color: #0b1d3a; transform: translate(-50%, -50%) scale(.6); opacity: 0; }
+  .s-saved i { width: 24px; height: 24px; border-radius: 50%; background: #1a9b5b; color: #fff; font-style: normal; display: grid; place-items: center; }
+  @media (prefers-reduced-motion: no-preference) {
+    .s-file { animation: s-fly 6s cubic-bezier(.45, 0, .2, 1) infinite; }
+    .s-panel { animation: s-panel 6s ease infinite; }
+    .s-bar i { animation: s-fill 6s ease-in-out infinite; }
+    .s-saved { animation: s-saved 6s ease infinite; }
+  }
+  @keyframes s-fly {
+    0%, 8%   { opacity: 0; left: 9%;  top: 44%; transform: scale(.7) rotate(0); }
+    13%      { opacity: 1; left: 9%;  top: 38%; transform: scale(1) rotate(0); }
+    30%      { left: 38%; top: 12%; transform: scale(1) rotate(-8deg); }
+    46%      { opacity: 1; left: 61%; top: 44%; transform: scale(.7) rotate(0); }
+    52%, 100% { opacity: 0; left: 61%; top: 46%; transform: scale(.5); }
+  }
+  @keyframes s-panel { 0%, 46% { opacity: 0; } 51%, 76% { opacity: 1; } 80%, 100% { opacity: 0; } }
+  @keyframes s-fill { 0%, 50% { width: 0; } 76%, 100% { width: 100%; } }
+  @keyframes s-saved { 0%, 78% { opacity: 0; transform: translate(-50%, -50%) scale(.6); }
+                       83%, 95% { opacity: 1; transform: translate(-50%, -50%) scale(1); } 100% { opacity: 0; transform: translate(-50%, -50%) scale(1); } }
+  @media (prefers-reduced-motion: reduce) { .s-saved { opacity: 1; transform: translate(-50%, -50%); } }
+
+  .meta { color: var(--soft); font-size: 14px; margin-top: 12px; }
+  .beta { margin-top: 18px; font-size: 15px; color: var(--soft); }
+
+  /* Facts */
+  .facts { display: grid; grid-template-columns: repeat(4, 1fr); border-top: 1px solid var(--line); border-bottom: 1px solid var(--line); }
+  .fact { padding: 22px 20px 22px 0; }
+  .fact + .fact { padding-left: 20px; border-left: 1px solid var(--line); }
+  .fact strong { display: block; font-size: 17px; }
+  .fact span { color: var(--soft); font-size: 15px; }
+
+  h2 { font-size: clamp(28px, 3.4vw, 38px); letter-spacing: -0.02em; line-height: 1.15; margin: 0 0 12px; }
+  section { padding: 88px 0 0; }
+  .section-intro { color: var(--soft); max-width: 56ch; margin: 0 0 36px; }
+
+  /* Screenshots */
+  .shots { display: grid; grid-template-columns: repeat(3, 1fr) 1.9fr; gap: 20px; align-items: start; }
+  .shot figure, figure.shot { margin: 0; }
+  .shot-frame { border-radius: 26px; background: #0c1628; overflow: hidden; padding: 6px; box-shadow: 0 24px 40px -28px rgba(11, 29, 58, .55); }
+  .shot-frame img { border-radius: 21px; }
+  .pc-shot img { border-radius: 10px; }
+  .shot-frame.phone-shot { aspect-ratio: 552 / 1110; }
+  .shot-frame.pc-shot { aspect-ratio: 10 / 7; border-radius: 16px; }
+  .shot-frame img { width: 100%; height: 100%; object-fit: cover; display: block; }
+  figcaption { margin-top: 12px; font-weight: 600; }
+
+  /* Steps: a real sequence, so numbered */
+  .steps { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(3, 1fr); gap: 40px; counter-reset: step; }
+  .steps li { counter-increment: step; }
+  .steps li::before { content: counter(step); display: grid; place-items: center; width: 40px; height: 40px; border-radius: 12px;
+                      background: var(--blue); color: #fff; font-weight: 700; margin-bottom: 14px; }
+  .steps strong { display: block; font-size: 19px; margin-bottom: 4px; }
+  .steps p { margin: 0; color: var(--soft); }
+
+  /* FAQ */
+  .faq { max-width: 780px; }
+  details { border-bottom: 1px solid var(--line); padding: 18px 0; }
+  summary { cursor: pointer; font-weight: 650; font-size: 18px; list-style: none; display: flex; justify-content: space-between; gap: 16px; }
+  summary::-webkit-details-marker { display: none; }
+  summary::after { content: "+"; color: var(--blue); font-size: 24px; line-height: 1; transition: transform .2s; }
+  details[open] summary::after { transform: rotate(45deg); }
+  details p { color: var(--soft); margin: 10px 0 0; max-width: 64ch; }
+
+  /* Closing call to action */
+  .closing { margin-top: 96px; background: var(--deep); color: #fff; border-radius: 32px; padding: 56px 48px;
+             display: flex; align-items: center; justify-content: space-between; gap: 32px; flex-wrap: wrap; }
+  .closing h2 { margin: 0 0 6px; }
+  .closing p { margin: 0; color: #cfe2ff; }
+  .closing .button { background: #fff; color: var(--deep); box-shadow: none; }
+  .closing .button:hover { background: #e8f1ff; }
+
+  footer { padding: 48px 0 56px; color: var(--soft); font-size: 15px; }
+  footer .wrap { display: flex; flex-wrap: wrap; gap: 12px 28px; }
+
+  @media (max-width: 860px) {
+    .hero { grid-template-columns: 1fr; padding-top: 24px; gap: 40px; }
+    .scene { max-width: 460px; }
+    .facts { grid-template-columns: 1fr 1fr; }
+    .fact:nth-child(3) { padding-left: 0; border-left: 0; }
+    .fact:nth-child(n+3) { border-top: 1px solid var(--line); }
+    .shots { grid-template-columns: repeat(3, 1fr); }
+    .shots .shot-wide { grid-column: 1 / -1; }
+    .steps { grid-template-columns: 1fr; gap: 28px; }
+  }
+  @media (max-width: 560px) {
+    .shots { display: flex; overflow-x: auto; scroll-snap-type: x mandatory; gap: 14px; padding-bottom: 8px; }
+    .shots .shot { flex: 0 0 62%; scroll-snap-align: start; }
+    .shots .shot-wide { flex-basis: 88%; }
+    .closing { padding: 40px 28px; }
+  }
 </style>
 </head>
 <body>
-<main>
-  <div class="brand">
-    <img src="logo.png" alt="">
+<header>
+  <div class="wrap">
+    <a class="brand" href="#"><img src="logo.png" alt="">Supreme Share</a>
+    <a class="header-link" href="#download">Download</a>
+  </div>
+</header>
+
+<main class="wrap">
+  <div class="hero">
     <div>
-      <h1>Supreme Share</h1>
-      <p class="tagline">From here to there. Without the cloud.</p>
+      <h1>Send files between your phone and PC. No cloud.</h1>
+      <p class="lede">From here to there, without the cloud. Photos, videos and whole folders go straight from one device to the other.</p>
+      <div class="actions" id="download">
+        <a class="button" href="https://github.com/supremeshare/supremeshare.github.io/releases/latest/download/SupremeShare-Windows.exe">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M3 5.5 10.5 4.4v7.1H3zm0 13 7.5 1.1v-7H3zm8.5 1.3L21 21v-8.4h-9.5zm0-15.6v7.3H21V3z"/></svg>
+          Download for Windows
+        </a>
+      </div>
+      <p class="meta">Version 1.0.0 beta · 0.4 MB · Windows 10 and 11</p>
+      <p class="beta">Android app coming to Google Play. Want to try it first? <a href="mailto:supremeshareapp@gmail.com?subject=Join%20the%20Supreme%20Share%20Android%20beta">Join the Android beta</a></p>
+    </div>
+    <div class="scene" aria-hidden="true">
+      <div class="s-laptop">
+        <div class="s-lid"><div class="s-screen">
+          <img src="img/windows.jpg" alt="" width="1100" height="773">
+          <div class="s-panel"><b>Receiving from Xiaomi 15</b><div class="s-bar"><i></i></div></div>
+          <div class="s-saved"><i>✓</i>Saved to Downloads</div>
+        </div></div>
+        <div class="s-base"></div>
+      </div>
+      <div class="s-phone"><img src="img/send.jpg" alt="" width="540" height="1098"></div>
+      <div class="s-file"></div>
     </div>
   </div>
 
-  <p>Send files directly between Android phones, and between your phone and your Windows PC. No cloud, no cables, no account.</p>
-
-  <div class="card">
-    <h2 style="margin-top:0">Supreme Share for Windows</h2>
-    <p>For Windows 10 and 11 with Bluetooth and Wi-Fi. Install the Android app on your phone too.</p>
-    <p><a class="button" href="https://github.com/supremeshare/supremeshare.github.io/releases/latest/download/SupremeShare-Windows.exe">Download for Windows</a></p>
-    <p class="small">This is a beta. Windows may show "Windows protected your PC" because the app is new and not yet code-signed: choose <strong>More info</strong>, then <strong>Run anyway</strong>. All versions are listed on the <a href="https://github.com/supremeshare/supremeshare.github.io/releases">releases page</a>.</p>
+  <div class="facts">
+    <div class="fact"><strong>No account</strong><span>Open the app and send</span></div>
+    <div class="fact"><strong>Encrypted</strong><span>A 6-digit code confirms the device</span></div>
+    <div class="fact"><strong>No ads, no tracking</strong><span>Nothing leaves your devices</span></div>
+    <div class="fact"><strong>Android 12+ and Windows 10/11</strong><span>Phone to phone, phone to PC</span></div>
   </div>
 
-  <h2>Android</h2>
-  <p>The Android app (Android 12 or newer) is coming to Google Play.</p>
+  <section>
+    <h2>Pick a device. That's it.</h2>
+    <p class="section-intro">Supreme Share finds your nearby phones and PCs on its own. Choose what to send, tap a device, and watch it arrive at full Wi-Fi speed.</p>
+    <div class="shots">
+      <figure class="shot"><div class="shot-frame phone-shot"><img src="img/home.jpg" alt="Supreme Share home screen with Send and Receive" width="540" height="1098" loading="lazy"></div><figcaption>Send or receive in one tap</figcaption></figure>
+      <figure class="shot"><div class="shot-frame phone-shot"><img src="img/send.jpg" alt="Send screen finding a nearby laptop" width="540" height="1098" loading="lazy"></div><figcaption>Nearby devices appear by themselves</figcaption></figure>
+      <figure class="shot"><div class="shot-frame phone-shot"><img src="img/sending.jpg" alt="Sending a video at 69 MB/s" width="540" height="1098" loading="lazy"></div><figcaption>69 MB/s on a real transfer</figcaption></figure>
+      <figure class="shot shot-wide"><div class="shot-frame pc-shot"><img src="img/windows.jpg" alt="The Windows app ready to receive" width="1100" height="773" loading="lazy"></div><figcaption>The Windows app, ready for your phone</figcaption></figure>
+    </div>
+  </section>
 
-  <h2>How it works</h2>
-  <ul>
-    <li>Bluetooth finds your nearby devices.</li>
-    <li>Files travel directly over Wi-Fi Direct, or over your own Wi-Fi.</li>
-    <li>The connection is encrypted, and a 6-digit code shows you are connecting to the right device.</li>
-  </ul>
+  <section>
+    <h2>How it works</h2>
+    <p class="section-intro">No pairing in Bluetooth settings and no shared account. The first time, both screens show the same code.</p>
+    <ol class="steps">
+      <li><strong>Open Supreme Share on both</strong><p>On the receiving device, tap Receive. A PC running the Windows app is always ready.</p></li>
+      <li><strong>Choose files and a device</strong><p>Bluetooth finds the other device nearby. Check that both show the same 6-digit code.</p></li>
+      <li><strong>Files arrive directly</strong><p>They travel over Wi-Fi Direct, or over your own Wi-Fi, and are saved in Downloads.</p></li>
+    </ol>
+  </section>
 
-  <footer>
-    <a href="privacy.html">Privacy Policy</a> · Contact: <a href="mailto:supremeshareapp@gmail.com">supremeshareapp@gmail.com</a>
-  </footer>
+  <section class="faq">
+    <h2>Questions</h2>
+    <details>
+      <summary>Windows says "Windows protected your PC". Is it safe?</summary>
+      <p>Windows shows this for new apps that are not code-signed yet. Choose More info, then Run anyway. You can compare the file with the SHA-256 checksum on the releases page.</p>
+    </details>
+    <details>
+      <summary>Will it work on my PC?</summary>
+      <p>Your PC needs Windows 10 or 11 with Bluetooth and Wi-Fi turned on. Most laptops have both. Very old Wi-Fi cards can be slow with Wi-Fi Direct; if a transfer is slow, connect both devices to the same Wi-Fi and choose Same Wi-Fi.</p>
+    </details>
+    <details>
+      <summary>Why does the Android app ask for Location?</summary>
+      <p>Android requires Location to be on for apps that use nearby Wi-Fi and Bluetooth. Supreme Share never reads, stores or shares your location.</p>
+    </details>
+    <details>
+      <summary>Does it need the internet or a Wi-Fi network?</summary>
+      <p>No. By default the devices connect to each other directly with Wi-Fi Direct. If both are on the same Wi-Fi, you can choose Same Wi-Fi instead.</p>
+    </details>
+    <details>
+      <summary>Is it free?</summary>
+      <p>Yes. There are no ads and no account during the beta.</p>
+    </details>
+    <details>
+      <summary>Something does not work. Who do I tell?</summary>
+      <p>Email <a href="mailto:supremeshareapp@gmail.com">supremeshareapp@gmail.com</a>, or use Send feedback in the app's Settings. Include your phone and PC model if you can.</p>
+    </details>
+  </section>
+
+  <div class="closing">
+    <div>
+      <h2>Your files, straight across.</h2>
+      <p>Free for Windows 10 and 11. Android app coming to Google Play.</p>
+    </div>
+    <a class="button" href="https://github.com/supremeshare/supremeshare.github.io/releases/latest/download/SupremeShare-Windows.exe">Download for Windows</a>
+  </div>
 </main>
+
+<footer>
+  <div class="wrap">
+    <span>© 2026 Supreme Share</span>
+    <a href="privacy.html">Privacy Policy</a>
+    <a href="mailto:supremeshareapp@gmail.com">supremeshareapp@gmail.com</a>
+    <a href="https://github.com/supremeshare/supremeshare.github.io/releases">All Windows versions</a>
+  </div>
+</footer>
 </body>
 </html>
