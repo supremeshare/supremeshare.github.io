@@ -62,23 +62,33 @@
   .note { color: var(--soft); font-size: 15px; }
 
   /* Hero scene: a real file leaves the phone and lands on the laptop (6 s loop) */
-  .scene { position: relative; width: 100%; max-width: 560px; aspect-ratio: 1.36; justify-self: center; }
+  .scene { position: relative; width: 100%; max-width: 560px; aspect-ratio: 1.36; justify-self: center; isolation: isolate; }
+  .scene::before { content: ""; position: absolute; inset: -6% -8% -10% -6%; z-index: -1; border-radius: 50%;
+                   background: radial-gradient(closest-side, rgba(9, 105, 232, .42), rgba(127, 187, 255, .22) 55%, transparent 100%); }
+  .scene::after { content: ""; position: absolute; left: 30%; right: 4%; top: 30%; bottom: 2%; z-index: -1; border-radius: 40%;
+                  background: radial-gradient(closest-side, rgba(7, 82, 196, .22), transparent); filter: blur(6px); }
   .s-phone { position: absolute; left: 1%; top: 6%; width: 27%; aspect-ratio: 540 / 1098; border-radius: 9% / 4.4%;
-             background: #0c1628; padding: 1.2%; box-shadow: 0 30px 50px -28px rgba(11, 29, 58, .55); z-index: 2; }
+             background: #0c1628; padding: 1.2%; box-shadow: 0 36px 60px -24px rgba(11, 29, 58, .7), 0 0 0 1px rgba(255,255,255,.06); z-index: 2; }
+  .s-phone img, .s-screen img { filter: contrast(1.07) saturate(1.25); }
   .s-phone img { display: block; width: 100%; height: 100%; object-fit: cover; object-position: top; border-radius: 8% / 3.9%; }
   .s-laptop { position: absolute; right: 0; top: 24%; width: 70%; }
-  .s-lid { position: relative; background: #0c1628; border-radius: 3.5% / 5%; padding: 2.4% 2.4% 2.8%; box-shadow: 0 34px 60px -34px rgba(11, 29, 58, .6); }
+  .s-lid { position: relative; background: #0c1628; border-radius: 3.5% / 5%; padding: 2.4% 2.4% 2.8%; box-shadow: 0 40px 70px -30px rgba(11, 29, 58, .75); }
   .s-lid::before { content: ""; position: absolute; left: 50%; top: 1%; width: .9%; aspect-ratio: 1; margin-left: -.45%; border-radius: 50%; background: #2c3e5c; }
   .s-screen { position: relative; aspect-ratio: 1100 / 773; border-radius: 1.6%; overflow: hidden; background: #eef3fb; }
   .s-screen img { display: block; width: 100%; height: 100%; object-fit: cover; }
   .s-base { height: 10px; margin: 0 -7%; border-radius: 0 0 14px 14px; background: linear-gradient(#e2e9f3, #b8c6da); position: relative; }
   .s-base::before { content: ""; position: absolute; left: 50%; top: 0; width: 16%; height: 4px; margin-left: -8%; border-radius: 0 0 6px 6px; background: #a6b6cc; }
-  .s-file { position: absolute; left: 9%; top: 40%; width: 11%; aspect-ratio: .86; border-radius: 16%; background: var(--blue); z-index: 3;
-            box-shadow: 0 14px 24px -10px rgba(9, 105, 232, .85); opacity: 0; }
+  .s-file { position: absolute; left: 9%; top: 40%; width: 13%; aspect-ratio: .86; border-radius: 16%; z-index: 3; opacity: 0;
+            background: linear-gradient(150deg, #2e8bff, #0752c4);
+            box-shadow: 0 0 0 5px rgba(9, 105, 232, .18), 0 18px 30px -10px rgba(9, 105, 232, .9); }
   .s-file::before { content: ""; position: absolute; left: 17%; right: 26%; top: 22%; height: 6%; border-radius: 3px; background: rgba(255,255,255,.9);
                     box-shadow: 0 0 0 0 transparent; }
   .s-file::after { content: ""; position: absolute; left: 17%; right: 17%; top: 40%; height: 6%; border-radius: 3px; background: rgba(255,255,255,.6);
                    box-shadow: 0 260% 0 rgba(255,255,255,.45); }
+  .s-speed { position: absolute; left: 35%; top: 2%; z-index: 4; padding: 7px 14px; border-radius: 999px; white-space: nowrap;
+             background: #0b1d3a; color: #fff; font-weight: 800; font-size: clamp(11px, 1.5vw, 15px); letter-spacing: -.01em;
+             box-shadow: 0 14px 28px -14px rgba(11, 29, 58, .8); opacity: 0; transform: translateY(8px); }
+  .s-speed b { color: #7fbbff; }
   .s-panel { position: absolute; left: 17%; right: 17%; top: 34%; padding: 3.5% 5%; white-space: nowrap; border-radius: 12px; background: rgba(255,255,255,.96);
              box-shadow: 0 16px 30px -16px rgba(11, 29, 58, .5); font-size: clamp(9px, 1.15vw, 13px); color: #0b1d3a; opacity: 0; }
   .s-panel b { display: block; margin-bottom: 7%; }
@@ -87,12 +97,13 @@
   .s-saved { position: absolute; left: 50%; top: 46%; display: flex; align-items: center; gap: 8px; white-space: nowrap;
              padding: 6px 14px 6px 6px; border-radius: 999px; background: #fff; box-shadow: 0 12px 24px -12px rgba(11, 29, 58, .55);
              font-size: clamp(10px, 1.6vw, 14px); font-weight: 700; color: #0b1d3a; transform: translate(-50%, -50%) scale(.6); opacity: 0; }
-  .s-saved i { width: 24px; height: 24px; border-radius: 50%; background: #1a9b5b; color: #fff; font-style: normal; display: grid; place-items: center; }
+  .s-saved i { width: 26px; height: 26px; border-radius: 50%; background: #16a34a; box-shadow: 0 0 0 4px rgba(22, 163, 74, .18); color: #fff; font-style: normal; display: grid; place-items: center; }
   @media (prefers-reduced-motion: no-preference) {
     .s-file { animation: s-fly 6s cubic-bezier(.45, 0, .2, 1) infinite; }
     .s-panel { animation: s-panel 6s ease infinite; }
     .s-bar i { animation: s-fill 6s ease-in-out infinite; }
     .s-saved { animation: s-saved 6s ease infinite; }
+    .s-speed { animation: s-speed 6s ease infinite; }
   }
   @keyframes s-fly {
     0%, 8%   { opacity: 0; left: 9%;  top: 44%; transform: scale(.7) rotate(0); }
@@ -101,6 +112,7 @@
     46%      { opacity: 1; left: 61%; top: 44%; transform: scale(.7) rotate(0); }
     52%, 100% { opacity: 0; left: 61%; top: 46%; transform: scale(.5); }
   }
+  @keyframes s-speed { 0%, 16% { opacity: 0; transform: translateY(8px); } 22%, 48% { opacity: 1; transform: none; } 54%, 100% { opacity: 0; transform: translateY(-6px); } }
   @keyframes s-panel { 0%, 46% { opacity: 0; } 51%, 76% { opacity: 1; } 80%, 100% { opacity: 0; } }
   @keyframes s-fill { 0%, 50% { width: 0; } 76%, 100% { width: 100%; } }
   @keyframes s-saved { 0%, 78% { opacity: 0; transform: translate(-50%, -50%) scale(.6); }
@@ -213,6 +225,7 @@
       </div>
       <div class="s-phone"><img src="img/send.jpg" alt="" width="540" height="1098"></div>
       <div class="s-file"></div>
+      <div class="s-speed"><b>69 MB/s</b> over Wi-Fi Direct</div>
     </div>
   </div>
 
