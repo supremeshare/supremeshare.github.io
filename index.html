@@ -110,6 +110,12 @@
   .meta { color: var(--soft); font-size: 14px; margin-top: 12px; }
   .beta { margin-top: 18px; font-size: 15px; color: var(--soft); }
 
+  /* Promo film: loads only when played */
+  .film { padding-top: 88px; }
+  .film video { display: block; width: 100%; aspect-ratio: 16 / 9; border-radius: 24px; background: #0c1628;
+                box-shadow: 0 30px 60px -36px rgba(11, 29, 58, .6); }
+  .film p { color: var(--soft); margin: 12px 0 0; font-size: 15px; }
+
   /* Facts */
   .facts { display: grid; grid-template-columns: repeat(4, 1fr); border-top: 1px solid var(--line); border-bottom: 1px solid var(--line); }
   .fact { padding: 22px 20px 22px 0; }
@@ -216,6 +222,15 @@
     <div class="fact"><strong>No ads, no tracking</strong><span>Nothing leaves your devices</span></div>
     <div class="fact"><strong>Android 12+ and Windows 10/11</strong><span>Phone to phone, phone to PC</span></div>
   </div>
+
+  <section class="film" aria-labelledby="film-title">
+    <h2 id="film-title">See it in action</h2>
+    <p class="section-intro">Phone to PC, PC to phone and phone to phone, with real speeds from a real transfer.</p>
+    <video controls preload="none" playsinline poster="media/promo-poster.jpg" width="1280" height="720">
+      <source src="media/promo.mp4" type="video/mp4">
+    </video>
+    <p>42 seconds, no sound.</p>
+  </section>
 
   <section>
     <h2>Pick a device. That's it.</h2>
